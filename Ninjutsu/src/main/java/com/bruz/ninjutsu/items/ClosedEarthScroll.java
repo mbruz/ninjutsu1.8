@@ -21,10 +21,14 @@ public class ClosedEarthScroll extends Item {
 		
 		//check criteria for unlocking
 		
-		//random value out of 1000 for determining rank
+		//random value out of 1000 for determining rank		
+		
+		if(!world.isRemote) {
+			stack.stackSize--;
+		}
 		
 		Item randomEarthScroll = GameRegistry.findItem(Main.MODID, "earthScrollRankD");
-		stack.setItem(randomEarthScroll);
+		player.inventory.addItemStackToInventory(new ItemStack(randomEarthScroll));
 		
 		return stack;
 	}
