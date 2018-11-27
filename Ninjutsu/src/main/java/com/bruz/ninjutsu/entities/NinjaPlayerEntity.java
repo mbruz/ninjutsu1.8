@@ -6,6 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class NinjaPlayerEntity extends EntityPlayer {
+	
+	
 
 	public NinjaPlayerEntity(World worldIn, GameProfile gameProfileIn) {
 		super(worldIn, gameProfileIn);
