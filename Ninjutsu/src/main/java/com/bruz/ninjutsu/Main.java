@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +41,11 @@ public class Main {
 	//items
 	public static Item closedEarthScroll;
 	public static Item earthScrollRankD;
+	
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		PacketDispatcher.registerPackets();
+	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {

@@ -1,12 +1,16 @@
 package com.bruz.ninjutsu.extendedproperties;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
+import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
+import com.bruz.ninjutsu.util.PacketDispatcher;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 
@@ -14,12 +18,16 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	protected EntityPlayer entity;
 	protected World theWorld;
 	
+	//add datawatcher for chakra
+	
+	public static final int CHAKRA_WATCHER = 20;
+	
 	private int chakraCurrent, chakraMax;
-	private int chakraControl;
-	private int chakraNature;
+	//private int chakraControl;
+	//private int chakraNature;
 
 	
-	private int fireAffinity, windAffinity, lightningAffinity, earthAffinity, waterAffinity;
+	//private int fireAffinity, windAffinity, lightningAffinity, earthAffinity, waterAffinity;
 	
 	//private int staminaCurrent, staminaMax;
 	//speed multiplier, jump multiplier, taijutsu--punch strength and speed
@@ -27,10 +35,12 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	//Constructor
 	public NinjaPropertiesPlayer(EntityPlayer player) {
 		this.entity = player;
-		chakraCurrent = chakraMax = 50;/*staminaCurrent = staminaMax =*/
-		fireAffinity = windAffinity = lightningAffinity = earthAffinity = waterAffinity = 0;
-		chakraControl = 0;
-		chakraNature = (int)Math.random()*5;
+		chakraMax = 50;
+		/*staminaCurrent = staminaMax =*/
+		this.entity.getDataWatcher().addObject(CHAKRA_WATCHER, this.chakraMax);
+		//fireAffinity = windAffinity = lightningAffinity = earthAffinity = waterAffinity = 0;
+		/*chakraControl = 0;
+		chakraNature = (int)Math.random()*5;*/
 		
 	}
 	
@@ -39,19 +49,19 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 
 		NBTTagCompound properties = new NBTTagCompound();
 		
-		properties.setInteger("CurrentChakra", this.chakraCurrent);
+		properties.setInteger("CurrentChakra", this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER));
 		properties.setInteger("MaxChakra", this.chakraMax);
 /*		properties.setInteger("CurrentStamina", this.staminaCurrent);
 		properties.setInteger("MaxStamina", this.staminaMax);*/
 		
-		properties.setInteger("FireAffinity", this.fireAffinity);
+/*		properties.setInteger("FireAffinity", this.fireAffinity);
 		properties.setInteger("WindAffinity", this.windAffinity);
 		properties.setInteger("LightningAffinity", this.lightningAffinity);
 		properties.setInteger("EarthAffinity", this.earthAffinity);
 		properties.setInteger("WaterAffinity", this.waterAffinity);
 		
 		properties.setInteger("ChakraControl", this.chakraControl);
-		properties.setInteger("ChakraNature", this.chakraNature);
+		properties.setInteger("ChakraNature", this.chakraNature);*/
 		
 		compound.setTag(extendedPropertiesName, properties);
 	}
@@ -61,25 +71,31 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 
 		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
 		
-		this.chakraCurrent = properties.getInteger("CurrentChakra");
+		this.entity.getDataWatcher().updateObject(CHAKRA_WATCHER, properties.getInteger("CurrentChakra"));
 		this.chakraMax = properties.getInteger("MaxChakra");
 /*		this.staminaCurrent = properties.getInteger("CurrentStamina");
 		this.staminaMax = properties.getInteger("MaxStamina");*/
 		
-		this.fireAffinity = properties.getInteger("FireAffinity");
+/*		this.fireAffinity = properties.getInteger("FireAffinity");
 		this.windAffinity = properties.getInteger("WindAffinity");
 		this.lightningAffinity = properties.getInteger("LightningAffinity");
 		this.earthAffinity = properties.getInteger("EarthAffinity");
 		this.waterAffinity = properties.getInteger("WaterAffinity");
 		
 		this.chakraControl = properties.getInteger("ChakraControl");
-		this.chakraNature = properties.getInteger("ChakraNature");
+		this.chakraNature = properties.getInteger("ChakraNature");*/
 	}
 
 	@Override
 	public void init(Entity entity, World world) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void copy(NinjaPropertiesPlayer props) {
+		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, props.getCurrentChakra());
+		chakraMax = props.chakraMax;
+		//manaRegenTimer = props.manaRegenTimer;
 	}
 	
 	//other methods for accessing and manipulating extended variables
@@ -94,12 +110,34 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	}
 	
 	public int getCurrentChakra() {
-		return this.chakraCurrent;
+		return this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER);
+	}
+	
+	public final void setCurrentChakra(int amount) {
+		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, amount > 0 ? (amount < chakraMax ? amount : chakraMax) : 0);
 	}
 	
 	public int getMaxChakra() {
 		return this.chakraMax;
 	}
+	
+	public final void setMaxChakra(int amount) {
+		chakraMax = (amount > 0 ? amount : 0);
+		// if your extended properties contains a lot of data, it would be better
+		// to make an individual packet for maxMana, rather than sending all of
+		// the data each time max mana changes...
+		
+		PacketDispatcher.sendTo(new SyncNinjaPropsMessage(entity), (EntityPlayerMP) entity);
+	}
+	
 	//consume chakra method
 	
+	//make individual messages for current chakra and max chakra
+	
+	public final void sync() 
+	{
+		PacketDispatcher.sendTo(new SyncNinjaPropsMessage(this.entity), (EntityPlayerMP) this.entity);
+	}
+	
+	public final void syncMaxChakra() {}
 }

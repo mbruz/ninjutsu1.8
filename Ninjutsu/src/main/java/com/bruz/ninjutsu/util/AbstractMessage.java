@@ -105,13 +105,13 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	 */
 	@Override
 	public final IMessage onMessage(T msg, MessageContext ctx) {
-/*		if (!msg.isValidOnSide(ctx.side)) {
+		if (!msg.isValidOnSide(ctx.side)) {
 			throw new RuntimeException("Invalid side " + ctx.side.name() + " for " + msg.getClass().getSimpleName());
 		} else if (msg.requiresMainThread()) {
 			checkThreadAndEnqueue(msg, ctx);
 		} else {
 			msg.process(Main.proxy.getPlayerEntity(ctx), ctx.side);
-		}*/
+		}
 		return null;
 	}
 
@@ -119,13 +119,13 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	 * 1.8 ONLY: Ensures that the message is being handled on the main thread
 	 */
 	private static final <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
-/*		IThreadListener thread = Main.proxy.getThreadFromContext(ctx);
+		IThreadListener thread = Main.proxy.getThreadFromContext(ctx);
 		// pretty much copied straight from vanilla code, see {@link PacketThreadUtil#checkThreadAndEnqueue}
 		thread.addScheduledTask(new Runnable() {
 			public void run() {
 				msg.process(Main.proxy.getPlayerEntity(ctx), ctx.side);
 			}
-		});*/
+		});
 	}
 
 	/**

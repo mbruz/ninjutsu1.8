@@ -1,6 +1,7 @@
 package com.bruz.ninjutsu.util;
 
 import com.bruz.ninjutsu.Main;
+import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -45,18 +46,12 @@ public class PacketDispatcher
 	 * Call this during pre-init or loading and register all of your packets (messages) here
 	 */
 	public static final void registerPackets() {
-		// Packets handled on CLIENT
-
-		// Packets handled on SERVER
+		
+		//registerMessage(SyncNinjaPropsMessage.class);
 
 		// If you don't want to make a 'registerMessage' method, you can do it directly:
-		//PacketDispatcher.dispatcher.registerMessage(SyncPlayerPropsMessage.class, SyncPlayerPropsMessage.class, packetId++, Side.CLIENT);
-		//PacketDispatcher.dispatcher.registerMessage(OpenGuiMessage.class, OpenGuiMessage.class, packetId++, Side.SERVER);
-
-		// The following two packets are not used in this demo, but have been used in my other mods
-		// I include them here simply for the sake of demonstrating packets that can be sent to both sides
-
-		// Bidirectional packets:
+		PacketDispatcher.dispatcher.registerMessage(SyncNinjaPropsMessage.class, SyncNinjaPropsMessage.class, packetId++, Side.CLIENT);
+		//PacketDispatcher.dispatcher.registerMessage(SyncNinjaPropsMessage.class, SyncNinjaPropsMessage.class, packetId++, Side.SERVER);
 	}
 
 	/**
