@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
-import com.bruz.ninjutsu.util.AbstractMessage;
-import com.bruz.ninjutsu.util.AbstractMessage.AbstractClientMessage;
+import com.bruz.ninjutsu.network.AbstractMessage.AbstractClientMessage;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

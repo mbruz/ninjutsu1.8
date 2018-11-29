@@ -1,4 +1,4 @@
-package com.bruz.ninjutsu.util;
+package com.bruz.ninjutsu.network;
 
 import io.netty.buffer.ByteBuf;
 

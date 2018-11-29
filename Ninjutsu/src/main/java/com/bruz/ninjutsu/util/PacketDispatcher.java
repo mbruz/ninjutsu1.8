@@ -1,6 +1,7 @@
 package com.bruz.ninjutsu.util;
 
 import com.bruz.ninjutsu.Main;
+import com.bruz.ninjutsu.network.AbstractMessage;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 
 import net.minecraft.entity.player.EntityPlayer;

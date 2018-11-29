@@ -5,6 +5,8 @@ import com.bruz.ninjutsu.items.ClosedEarthScroll;
 import com.bruz.ninjutsu.items.EarthScrollRankD;
 import com.bruz.ninjutsu.util.NinjutsuEventHandler;
 import com.bruz.ninjutsu.util.PacketDispatcher;
+import com.bruz.ninjutsu.util.keybinding.NinjutsuKeyBinds;
+import com.bruz.ninjutsu.util.keybinding.KeyInputHandler;
 import com.bruz.ninjutsu.util.proxy.CommonProxy;
 
 import net.minecraft.client.Minecraft;
@@ -44,7 +46,12 @@ public class Main {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		//Register Network Packets
 		PacketDispatcher.registerPackets();
+		
+		//Register Key Bindings
+		NinjutsuKeyBinds.register();
+		MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
 	}
 	
 	@EventHandler

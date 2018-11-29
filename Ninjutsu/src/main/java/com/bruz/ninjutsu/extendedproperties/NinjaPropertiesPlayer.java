@@ -18,11 +18,10 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	protected EntityPlayer entity;
 	protected World theWorld;
 	
-	//add datawatcher for chakra
+	private boolean chakraMode;
 	
-	public static final int CHAKRA_WATCHER = 20;
-	
-	private int chakraCurrent, chakraMax;
+	public static final int CHAKRA_WATCHER = 20;	
+	private int chakraMax, chakraRegenTimer;
 	//private int chakraControl;
 	//private int chakraNature;
 
@@ -35,7 +34,9 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	//Constructor
 	public NinjaPropertiesPlayer(EntityPlayer player) {
 		this.entity = player;
+		chakraMode = false;
 		chakraMax = 50;
+		chakraRegenTimer = 0;
 		/*staminaCurrent = staminaMax =*/
 		this.entity.getDataWatcher().addObject(CHAKRA_WATCHER, this.chakraMax);
 		//fireAffinity = windAffinity = lightningAffinity = earthAffinity = waterAffinity = 0;
@@ -51,6 +52,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		properties.setInteger("CurrentChakra", this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER));
 		properties.setInteger("MaxChakra", this.chakraMax);
+		properties.setInteger("ChakraRegenTimer", chakraRegenTimer);
 /*		properties.setInteger("CurrentStamina", this.staminaCurrent);
 		properties.setInteger("MaxStamina", this.staminaMax);*/
 		
@@ -73,6 +75,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		this.entity.getDataWatcher().updateObject(CHAKRA_WATCHER, properties.getInteger("CurrentChakra"));
 		this.chakraMax = properties.getInteger("MaxChakra");
+		chakraRegenTimer = properties.getInteger("ChakraRegenTimer");
 /*		this.staminaCurrent = properties.getInteger("CurrentStamina");
 		this.staminaMax = properties.getInteger("MaxStamina");*/
 		
@@ -95,14 +98,10 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	public void copy(NinjaPropertiesPlayer props) {
 		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, props.getCurrentChakra());
 		chakraMax = props.chakraMax;
-		//manaRegenTimer = props.manaRegenTimer;
+		chakraRegenTimer = props.chakraRegenTimer;
 	}
 	
-	//other methods for accessing and manipulating extended variables
-	public static final void register(EntityPlayer player)
-	{
-		player.registerExtendedProperties(NinjaPropertiesPlayer.extendedPropertiesName, new NinjaPropertiesPlayer(player));
-	}
+	//Getters and Setters
 	
 	public static final NinjaPropertiesPlayer get(EntityPlayer player)
 	{
@@ -130,14 +129,64 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		PacketDispatcher.sendTo(new SyncNinjaPropsMessage(entity), (EntityPlayerMP) entity);
 	}
 	
-	//consume chakra method
+	//Chakra Updating
 	
-	//make individual messages for current chakra and max chakra
+	public boolean getChakraMode() {
+		return chakraMode;
+	}
+	
+	public boolean ToggleChakraMode() {
+		chakraMode = !chakraMode;
+		return chakraMode;
+	}
+	
+	private boolean updateChakraTimer() {
+		if (chakraRegenTimer > 0) {
+			--chakraRegenTimer;
+		}
+		if (chakraRegenTimer == 0) {
+			chakraRegenTimer = getCurrentChakra() < getMaxChakra() ? 100 : 0;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public final void regenChakra(int amount) {
+		setCurrentChakra(getCurrentChakra() + amount);
+	}
+	
+	public final boolean consumeChakra(int amount) {
+		boolean sufficient = amount <= getCurrentChakra();
+		setCurrentChakra(getCurrentChakra() - amount);
+		return sufficient;
+	}
+	
+	public void onUpdate() {
+		// only want to update the timer and regen mana on the server:
+		if (!entity.worldObj.isRemote) {
+			if (updateChakraTimer()) {
+				regenChakra(1);
+			}
+		}
+	}
+	
+	//Sync methods
 	
 	public final void sync() 
 	{
 		PacketDispatcher.sendTo(new SyncNinjaPropsMessage(this.entity), (EntityPlayerMP) this.entity);
 	}
 	
-	public final void syncMaxChakra() {}
+	public final void syncMaxChakra() 
+	{
+		//make individual message for max chakra
+	}
+	
+	//helpers
+	
+	public static final void register(EntityPlayer player)
+	{
+		player.registerExtendedProperties(NinjaPropertiesPlayer.extendedPropertiesName, new NinjaPropertiesPlayer(player));
+	}
 }
