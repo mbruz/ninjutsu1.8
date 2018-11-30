@@ -1,5 +1,7 @@
 package com.bruz.ninjutsu.util.keybinding;
 
+import org.lwjgl.input.Keyboard;
+
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 
 import net.minecraft.client.Minecraft;
@@ -29,5 +31,8 @@ public class KeyInputHandler {
         boolean isChakraModeActive = NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).getChakraMode();
         
         // use this to check for handsigns
+        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_K)) {
+        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "K")); 
+        }
     }
 }

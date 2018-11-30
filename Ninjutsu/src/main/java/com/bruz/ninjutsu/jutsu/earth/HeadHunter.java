@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
+import com.bruz.ninjutsu.enums.EnumHandSign;
 import com.bruz.ninjutsu.enums.EnumRank;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 
@@ -24,6 +25,7 @@ public class HeadHunter extends Jutsu implements ICommand {
 		super(EnumChakraRelease.EARTH, "Earth Style: Head Hunter Jutsu", EnumRank.D, 10);
 		aliases.add("earth headhunter");
 		aliases.add("e headhunter");
+		_handSignRequirement = new EnumHandSign[]{EnumHandSign.SNAKE};
 	}
 
 	@Override

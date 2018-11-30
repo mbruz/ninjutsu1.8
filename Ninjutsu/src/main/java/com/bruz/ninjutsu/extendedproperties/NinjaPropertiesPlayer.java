@@ -1,5 +1,8 @@
 package com.bruz.ninjutsu.extendedproperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 import com.bruz.ninjutsu.util.PacketDispatcher;
@@ -31,6 +34,8 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	//private int staminaCurrent, staminaMax;
 	//speed multiplier, jump multiplier, taijutsu--punch strength and speed
 	
+	private List<Integer> earthJutsu;
+	
 	//Constructor
 	public NinjaPropertiesPlayer(EntityPlayer player) {
 		this.entity = player;
@@ -49,7 +54,6 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	public void saveNBTData(NBTTagCompound compound) {
 
 		NBTTagCompound properties = new NBTTagCompound();
-		
 		properties.setInteger("CurrentChakra", this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER));
 		properties.setInteger("MaxChakra", this.chakraMax);
 		properties.setInteger("ChakraRegenTimer", chakraRegenTimer);
