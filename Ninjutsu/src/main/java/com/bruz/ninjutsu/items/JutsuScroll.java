@@ -1,7 +1,11 @@
 package com.bruz.ninjutsu.items;
 
+import java.util.ArrayList;
+
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
+import com.bruz.ninjutsu.enums.EnumHandSign;
 import com.bruz.ninjutsu.enums.EnumRank;
+import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 import com.bruz.ninjutsu.jutsu.earth.EarthJutsuList;
 import com.bruz.ninjutsu.jutsu.earth.HeadHunter;
@@ -20,13 +24,21 @@ public abstract class JutsuScroll extends Item {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		
 		if(!world.isRemote) {
-			player.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "You have learned " + _jutsu.getJutsuName()));
+			ArrayList<EnumHandSign> al = null;
+			for(EnumHandSign n: _jutsu._handSignRequirement){
+				al.add(n);
+			}
 			
+			boolean hasJutsu = NinjaPropertiesPlayer.get(player).checkForJutsu(al);
+			if(hasJutsu) {
+				player.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "You already know  " + _jutsu.getJutsuName()));
+				
+			}else{
+				NinjaPropertiesPlayer.get(player).learnJutsu(al);
+				player.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "You have learned " + _jutsu.getJutsuName()));
+				stack.stackSize--;
+			}
 		}
-		
-		//add jutsu to player list
-		
-		stack.stackSize--;
 		
 		//send packet for jutsu list
 		
@@ -43,7 +55,7 @@ public abstract class JutsuScroll extends Item {
 				break;
 			case LIGHTNING: //get random Lightning
 				break;
-			case EARTH: j = EarthJutsuList.getRandomEarthJutsu(rank);
+			case EARTH: //j = EarthJutsuList.getRandomEarthJutsu(rank);
 				break;
 			case WATER: //get random water
 				break;

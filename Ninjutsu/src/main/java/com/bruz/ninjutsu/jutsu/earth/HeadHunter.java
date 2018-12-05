@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
 import com.bruz.ninjutsu.enums.EnumHandSign;
+import com.bruz.ninjutsu.enums.EnumJutsu;
 import com.bruz.ninjutsu.enums.EnumRank;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 
@@ -22,10 +23,10 @@ public class HeadHunter extends Jutsu implements ICommand {
 	private EntityPlayer target;
 	
 	public HeadHunter() {
-		super(EnumChakraRelease.EARTH, "Earth Style: Head Hunter Jutsu", EnumRank.D, 10);
+		super(EnumChakraRelease.EARTH, "Earth Style: Head Hunter Jutsu", EnumRank.D, 10, new EnumHandSign[]{EnumHandSign.SNAKE});
 		aliases.add("earth headhunter");
 		aliases.add("e headhunter");
-		_handSignRequirement = new EnumHandSign[]{EnumHandSign.SNAKE};
+		JUTSUID = EnumJutsu.HeadHunter;
 	}
 
 	@Override
@@ -55,6 +56,8 @@ public class HeadHunter extends Jutsu implements ICommand {
 		if(args.length != 1) {
 			sendErrorMessage(sender, "Invalid number of arguments");
 		}
+		
+		sender.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + this._name));
 		
 	}
 

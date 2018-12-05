@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
+import com.bruz.ninjutsu.enums.EnumHandSign;
+import com.bruz.ninjutsu.jutsu.Jutsu;
+import com.bruz.ninjutsu.jutsu.JutsuList;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 import com.bruz.ninjutsu.util.PacketDispatcher;
 
@@ -11,8 +14,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
@@ -25,85 +32,41 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	
 	public static final int CHAKRA_WATCHER = 20;	
 	private int chakraMax, chakraRegenTimer;
-	//private int chakraControl;
-	//private int chakraNature;
-
 	
+	public static final int STAMINA_WATCHER = 21;
+	private int staminaMax, staminaRegenTimer;
+	
+	//private int chakraControl;
+	//private int chakraNature;	
 	//private int fireAffinity, windAffinity, lightningAffinity, earthAffinity, waterAffinity;
 	
-	//private int staminaCurrent, staminaMax;
 	//speed multiplier, jump multiplier, taijutsu--punch strength and speed
 	
-	private List<Integer> earthJutsu;
+	private ArrayList<EnumHandSign> handSigns;
+	private int handSignTimer;
+	private ArrayList<ArrayList<EnumHandSign>> jutsus;
 	
 	//Constructor
 	public NinjaPropertiesPlayer(EntityPlayer player) {
 		this.entity = player;
 		chakraMode = false;
-		chakraMax = 50;
-		chakraRegenTimer = 0;
-		/*staminaCurrent = staminaMax =*/
+		chakraMax = staminaMax = 50;
+		chakraRegenTimer = staminaRegenTimer = 0;
+		
 		this.entity.getDataWatcher().addObject(CHAKRA_WATCHER, this.chakraMax);
-		//fireAffinity = windAffinity = lightningAffinity = earthAffinity = waterAffinity = 0;
+		this.entity.getDataWatcher().addObject(STAMINA_WATCHER, this.staminaMax);
+		
+		handSigns = new ArrayList<EnumHandSign>();
+		handSignTimer = 0;
+		jutsus = new ArrayList<ArrayList<EnumHandSign>>();
+		//other stamina attributes
+		//affinities
 		/*chakraControl = 0;
 		chakraNature = (int)Math.random()*5;*/
 		
 	}
 	
-	@Override
-	public void saveNBTData(NBTTagCompound compound) {
 
-		NBTTagCompound properties = new NBTTagCompound();
-		properties.setInteger("CurrentChakra", this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER));
-		properties.setInteger("MaxChakra", this.chakraMax);
-		properties.setInteger("ChakraRegenTimer", chakraRegenTimer);
-/*		properties.setInteger("CurrentStamina", this.staminaCurrent);
-		properties.setInteger("MaxStamina", this.staminaMax);*/
-		
-/*		properties.setInteger("FireAffinity", this.fireAffinity);
-		properties.setInteger("WindAffinity", this.windAffinity);
-		properties.setInteger("LightningAffinity", this.lightningAffinity);
-		properties.setInteger("EarthAffinity", this.earthAffinity);
-		properties.setInteger("WaterAffinity", this.waterAffinity);
-		
-		properties.setInteger("ChakraControl", this.chakraControl);
-		properties.setInteger("ChakraNature", this.chakraNature);*/
-		
-		compound.setTag(extendedPropertiesName, properties);
-	}
-
-	@Override
-	public void loadNBTData(NBTTagCompound compound) {
-
-		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
-		
-		this.entity.getDataWatcher().updateObject(CHAKRA_WATCHER, properties.getInteger("CurrentChakra"));
-		this.chakraMax = properties.getInteger("MaxChakra");
-		chakraRegenTimer = properties.getInteger("ChakraRegenTimer");
-/*		this.staminaCurrent = properties.getInteger("CurrentStamina");
-		this.staminaMax = properties.getInteger("MaxStamina");*/
-		
-/*		this.fireAffinity = properties.getInteger("FireAffinity");
-		this.windAffinity = properties.getInteger("WindAffinity");
-		this.lightningAffinity = properties.getInteger("LightningAffinity");
-		this.earthAffinity = properties.getInteger("EarthAffinity");
-		this.waterAffinity = properties.getInteger("WaterAffinity");
-		
-		this.chakraControl = properties.getInteger("ChakraControl");
-		this.chakraNature = properties.getInteger("ChakraNature");*/
-	}
-
-	@Override
-	public void init(Entity entity, World world) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void copy(NinjaPropertiesPlayer props) {
-		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, props.getCurrentChakra());
-		chakraMax = props.chakraMax;
-		chakraRegenTimer = props.chakraRegenTimer;
-	}
 	
 	//Getters and Setters
 	
@@ -116,12 +79,24 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		return this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER);
 	}
 	
+	public int getCurrentStamina() {
+		return this.entity.getDataWatcher().getWatchableObjectInt(STAMINA_WATCHER);
+	}
+	
 	public final void setCurrentChakra(int amount) {
 		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, amount > 0 ? (amount < chakraMax ? amount : chakraMax) : 0);
 	}
 	
+	public final void setCurrentStamina(int amount) {
+		entity.getDataWatcher().updateObject(STAMINA_WATCHER, amount > 0 ? (amount < staminaMax ? amount : staminaMax) : 0);
+	}
+	
 	public int getMaxChakra() {
 		return this.chakraMax;
+	}
+	
+	public int getMaxStamina() {
+		return this.staminaMax;
 	}
 	
 	public final void setMaxChakra(int amount) {
@@ -133,7 +108,11 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		PacketDispatcher.sendTo(new SyncNinjaPropsMessage(entity), (EntityPlayerMP) entity);
 	}
 	
-	//Chakra Updating
+	public void learnJutsu(ArrayList<EnumHandSign> hs) {
+		jutsus.add(hs);
+	}
+	
+	//Chakra
 	
 	public boolean getChakraMode() {
 		return chakraMode;
@@ -171,8 +150,126 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		if (!entity.worldObj.isRemote) {
 			if (updateChakraTimer()) {
 				regenChakra(1);
+			}			
+		}
+		updateHandSignTimer();
+	}
+	
+	//handsigns
+	
+	public ArrayList<EnumHandSign> getHandSigns(){
+		return handSigns;
+	}
+	
+	public void addHandSign(EnumHandSign hs) {
+		handSigns.add(hs);
+		handSignTimer = 10;
+	}
+	
+	private boolean updateHandSignTimer() {
+		if (handSignTimer > 0) {
+			--handSignTimer;
+			entity.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + String.valueOf(handSignTimer))); 
+		}else if(handSigns.size() > 0){
+			//check if user has jutsu in personal list
+			boolean hasJutsu = checkForJutsu(handSigns);
+			if(hasJutsu) {
+				//check here to find and load jutsu
+				EnumHandSign[] arr = (EnumHandSign[]) handSigns.toArray();
+				Jutsu j = JutsuList.matchHandSigns(arr);
+				if(j != null) {
+					// set jutsu for right click
+				}
+				
+				handSigns = new ArrayList<EnumHandSign>();
+				entity.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Cleared"));
+			}		
+		}
+		
+		return false;
+	}
+	
+	public boolean checkForJutsu(ArrayList<EnumHandSign> hs) {
+		return jutsus.contains(hs);
+	}
+	
+	//NBT
+	
+	@Override
+	public void saveNBTData(NBTTagCompound compound) {
+
+		NBTTagCompound properties = new NBTTagCompound();
+		properties.setInteger("CurrentChakra", this.entity.getDataWatcher().getWatchableObjectInt(CHAKRA_WATCHER));
+		properties.setInteger("MaxChakra", this.chakraMax);
+		properties.setInteger("ChakraRegenTimer", chakraRegenTimer);		
+		
+		properties.setInteger("CurrentStamina", this.entity.getDataWatcher().getWatchableObjectInt(STAMINA_WATCHER));
+		properties.setInteger("MaxStamina", this.staminaMax);
+		
+		
+		
+/*		properties.setInteger("FireAffinity", this.fireAffinity);
+		properties.setInteger("WindAffinity", this.windAffinity);
+		properties.setInteger("LightningAffinity", this.lightningAffinity);
+		properties.setInteger("EarthAffinity", this.earthAffinity);
+		properties.setInteger("WaterAffinity", this.waterAffinity);
+		
+		properties.setInteger("ChakraControl", this.chakraControl);
+		properties.setInteger("ChakraNature", this.chakraNature);*/
+		
+		//taglist of tags for storing jutsus
+		if(jutsus.size() > 0) {
+			NBTTagList tagList = new NBTTagList();
+			for(int i = 0; i < jutsus.size(); i++) {
+				ArrayList<EnumHandSign> al = jutsus.get(i);
+				int id = JutsuList.matchHandSignsToId((EnumHandSign[])al.toArray());
+				if(id >= 0) {
+					NBTTagCompound tag = new NBTTagCompound();
+					tag.setInteger("jutsu" + i, id);
+					tagList.appendTag(tag);
+				}
+			}
+			properties.setTag("JutsuList", tagList);
+		}		
+		
+		compound.setTag(extendedPropertiesName, properties);
+	}
+
+	@Override
+	public void loadNBTData(NBTTagCompound compound) {
+
+		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
+		
+		this.entity.getDataWatcher().updateObject(CHAKRA_WATCHER, properties.getInteger("CurrentChakra"));
+		this.chakraMax = properties.getInteger("MaxChakra");
+		chakraRegenTimer = properties.getInteger("ChakraRegenTimer");
+		
+		this.entity.getDataWatcher().updateObject(STAMINA_WATCHER, properties.getInteger("CurrentStamina"));
+		this.staminaMax = properties.getInteger("MaxStamina");
+		
+/*		this.fireAffinity = properties.getInteger("FireAffinity");
+		this.windAffinity = properties.getInteger("WindAffinity");
+		this.lightningAffinity = properties.getInteger("LightningAffinity");
+		this.earthAffinity = properties.getInteger("EarthAffinity");
+		this.waterAffinity = properties.getInteger("WaterAffinity");
+		
+		this.chakraControl = properties.getInteger("ChakraControl");
+		this.chakraNature = properties.getInteger("ChakraNature");*/
+		NBTTagList tagList = properties.getTagList("JutsuList", Constants.NBT.TAG_COMPOUND);
+		if(tagList.tagCount() > 0) {
+			for(int i = 0; i < tagList.tagCount(); i++) {
+				NBTTagCompound tag = tagList.getCompoundTagAt(i);
+				int jutsuID = tag.getInteger("jutsu" + i);
+				ArrayList<EnumHandSign> al = JutsuList.matchIDtoHandSigns(jutsuID);
+				jutsus.add(al);
 			}
 		}
+	}
+
+	@Override
+	public void init(Entity entity, World world) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	//Sync methods
@@ -188,6 +285,14 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	}
 	
 	//helpers
+	
+	public void copy(NinjaPropertiesPlayer props) {
+		entity.getDataWatcher().updateObject(CHAKRA_WATCHER, props.getCurrentChakra());
+		chakraMax = props.chakraMax;
+		chakraRegenTimer = props.chakraRegenTimer;
+		
+		entity.getDataWatcher().updateObject(STAMINA_WATCHER, props.getCurrentStamina());
+	}
 	
 	public static final void register(EntityPlayer player)
 	{
