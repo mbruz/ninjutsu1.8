@@ -14,7 +14,7 @@ public abstract class Jutsu {
 	public String _name;
 	public EnumRank _rank;
 	public int _chakraCost;
-	public EnumHandSign[] _handSignRequirement;
+	public ArrayList<EnumHandSign> _handSignRequirement;
 	
 	
 	public Jutsu(EnumChakraRelease release, String name, EnumRank rank, int chakraCost, EnumHandSign[] hs) {
@@ -22,7 +22,11 @@ public abstract class Jutsu {
 		_name = name;
 		_rank = rank;
 		_chakraCost = chakraCost;
-		_handSignRequirement = hs;
+		_handSignRequirement = new ArrayList<EnumHandSign>();
+		
+		for(int i = 0; i < hs.length; i++) {
+			_handSignRequirement.add(hs[i]);
+		}
 	}
 
 	public String getJutsuName() {

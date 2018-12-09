@@ -54,10 +54,14 @@ public class Main {
 		//Register Key Bindings
 		NinjutsuKeyBinds.register();
 		MinecraftForge.EVENT_BUS.register(new KeyInputHandler());
+		
+		
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		JutsuList.init();
+		
 		MinecraftForge.EVENT_BUS.register(new NinjutsuEventHandler());
 		
 		//REGISTER ITEMS
@@ -81,7 +85,7 @@ public class Main {
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
 			MinecraftForge.EVENT_BUS.register(new GuiChakraBar(Minecraft.getMinecraft()));
 
-		JutsuList.init();
+		
 	}
 	
 	

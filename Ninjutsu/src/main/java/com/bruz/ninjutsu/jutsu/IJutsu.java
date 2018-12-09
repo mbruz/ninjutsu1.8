@@ -2,8 +2,8 @@ package com.bruz.ninjutsu.jutsu;
 
 import java.util.ArrayList;
 
-public interface IJutsu {
+import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 
-	public ArrayList<String> getHandSigns();
-	public void castJutsu();
+public interface IJutsu {
+	public void castJutsu(NinjaPropertiesPlayer player);
 }

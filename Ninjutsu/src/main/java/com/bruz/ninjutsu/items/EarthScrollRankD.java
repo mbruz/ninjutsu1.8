@@ -10,10 +10,13 @@ public class EarthScrollRankD extends JutsuScroll {
 	
 	public EarthScrollRankD() {
 		super();
-		this.setUnlocalizedName("earthScrollRankD");
-		this.setCreativeTab(CreativeTabs.tabMisc);
 		
-		this.setJutsu(this.getScrollJutsu(EnumChakraRelease.EARTH, EnumRank.D));
+		this._rank = EnumRank.D;
+		this._release = EnumChakraRelease.EARTH;
+		
+		this.setUnlocalizedName("earthScrollRankD");
+		this.setCreativeTab(CreativeTabs.tabMisc);	
+		
 		
 	}
 	

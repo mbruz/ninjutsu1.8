@@ -5,11 +5,15 @@ import java.util.List;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
 import com.bruz.ninjutsu.enums.EnumHandSign;
+import com.bruz.ninjutsu.jutsu.IJutsu;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 import com.bruz.ninjutsu.jutsu.JutsuList;
+import com.bruz.ninjutsu.network.SyncJutsuListMessage;
+import com.bruz.ninjutsu.network.SyncMaxChakraMessage;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 import com.bruz.ninjutsu.util.PacketDispatcher;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -25,7 +29,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 
 	public final static String extendedPropertiesName = "ninjaPropertiesPlayer";
-	protected EntityPlayer entity;
+	public EntityPlayer entity;
 	protected World theWorld;
 	
 	private boolean chakraMode;
@@ -45,10 +49,13 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	private ArrayList<EnumHandSign> handSigns;
 	private int handSignTimer;
 	private ArrayList<ArrayList<EnumHandSign>> jutsus;
+	private IJutsu defaultJutsu;
+	private IJutsu loadedJutsu;
 	
 	//Constructor
 	public NinjaPropertiesPlayer(EntityPlayer player) {
 		this.entity = player;
+		
 		chakraMode = false;
 		chakraMax = staminaMax = 50;
 		chakraRegenTimer = staminaRegenTimer = 0;
@@ -58,7 +65,9 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		handSigns = new ArrayList<EnumHandSign>();
 		handSignTimer = 0;
+		
 		jutsus = new ArrayList<ArrayList<EnumHandSign>>();
+		
 		//other stamina attributes
 		//affinities
 		/*chakraControl = 0;
@@ -73,6 +82,14 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	public static final NinjaPropertiesPlayer get(EntityPlayer player)
 	{
 		return (NinjaPropertiesPlayer) player.getExtendedProperties(extendedPropertiesName);
+	}
+	
+	public IJutsu getLoadedJutsu() {
+		if(this.loadedJutsu != null) {
+			return this.loadedJutsu;
+		}else {
+			return this.defaultJutsu;
+		}
 	}
 	
 	public int getCurrentChakra() {
@@ -109,7 +126,8 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	}
 	
 	public void learnJutsu(ArrayList<EnumHandSign> hs) {
-		jutsus.add(hs);
+		jutsus.add(hs);		
+		syncJutsuList();
 	}
 	
 	//Chakra
@@ -168,22 +186,21 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	
 	private boolean updateHandSignTimer() {
 		if (handSignTimer > 0) {
-			--handSignTimer;
-			entity.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + String.valueOf(handSignTimer))); 
-		}else if(handSigns.size() > 0){
+			--handSignTimer; 
+		}else if(handSigns.size() > 0 && handSignTimer == 0){
 			//check if user has jutsu in personal list
-			boolean hasJutsu = checkForJutsu(handSigns);
+			boolean hasJutsu = checkForJutsu(handSigns);		
+			
 			if(hasJutsu) {
 				//check here to find and load jutsu
-				EnumHandSign[] arr = (EnumHandSign[]) handSigns.toArray();
-				Jutsu j = JutsuList.matchHandSigns(arr);
-				if(j != null) {
-					// set jutsu for right click
-				}
+				IJutsu j = (IJutsu)JutsuList.matchHandSigns(handSigns);
 				
-				handSigns = new ArrayList<EnumHandSign>();
-				entity.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Cleared"));
-			}		
+				if(j != null) {
+					entity.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Jutsu Matched"));
+					loadedJutsu = j;
+				}
+			}	
+			handSigns = new ArrayList<EnumHandSign>();
 		}
 		
 		return false;
@@ -205,6 +222,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		properties.setInteger("CurrentStamina", this.entity.getDataWatcher().getWatchableObjectInt(STAMINA_WATCHER));
 		properties.setInteger("MaxStamina", this.staminaMax);
+		properties.setInteger("StaminaRegenTimer", staminaRegenTimer);
 		
 		
 		
@@ -222,7 +240,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 			NBTTagList tagList = new NBTTagList();
 			for(int i = 0; i < jutsus.size(); i++) {
 				ArrayList<EnumHandSign> al = jutsus.get(i);
-				int id = JutsuList.matchHandSignsToId((EnumHandSign[])al.toArray());
+				int id = JutsuList.matchHandSignsToId(al);
 				if(id >= 0) {
 					NBTTagCompound tag = new NBTTagCompound();
 					tag.setInteger("jutsu" + i, id);
@@ -234,7 +252,6 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		compound.setTag(extendedPropertiesName, properties);
 	}
-
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 
@@ -246,6 +263,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		
 		this.entity.getDataWatcher().updateObject(STAMINA_WATCHER, properties.getInteger("CurrentStamina"));
 		this.staminaMax = properties.getInteger("MaxStamina");
+		staminaRegenTimer = properties.getInteger("StaminaRegenTimer");
 		
 /*		this.fireAffinity = properties.getInteger("FireAffinity");
 		this.windAffinity = properties.getInteger("WindAffinity");
@@ -266,6 +284,55 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		}
 	}
 
+	public void saveMaxChakra(NBTTagCompound compound) {
+		NBTTagCompound properties = new NBTTagCompound();
+		
+		properties.setInteger("MaxChakra", this.chakraMax);
+		properties.setInteger("ChakraRegenTimer", chakraRegenTimer);
+		
+		compound.setTag(extendedPropertiesName, properties);
+	}
+	public void loadMaxChakra(NBTTagCompound compound) {
+		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
+		
+		this.chakraMax = properties.getInteger("MaxChakra");
+		chakraRegenTimer = properties.getInteger("ChakraRegenTimer");
+
+	}
+	
+	public void saveJutsuList(NBTTagCompound compound) {
+		NBTTagCompound properties = new NBTTagCompound();
+		
+		if(jutsus.size() > 0) {
+			NBTTagList tagList = new NBTTagList();
+			for(int i = 0; i < jutsus.size(); i++) {
+				ArrayList<EnumHandSign> al = jutsus.get(i);
+				int id = JutsuList.matchHandSignsToId(al);
+				if(id >= 0) {
+					NBTTagCompound tag = new NBTTagCompound();
+					tag.setInteger("jutsu" + i, id);
+					tagList.appendTag(tag);
+				}
+			}
+			properties.setTag("JutsuList", tagList);
+		}
+		
+		compound.setTag(extendedPropertiesName, properties);
+	}
+	public void loadJutsuList(NBTTagCompound compound) {
+		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
+		
+		NBTTagList tagList = properties.getTagList("JutsuList", Constants.NBT.TAG_COMPOUND);
+		if(tagList.tagCount() > 0) {
+			for(int i = 0; i < tagList.tagCount(); i++) {
+				NBTTagCompound tag = tagList.getCompoundTagAt(i);
+				int jutsuID = tag.getInteger("jutsu" + i);
+				ArrayList<EnumHandSign> al = JutsuList.matchIDtoHandSigns(jutsuID);
+				jutsus.add(al);
+			}
+		}
+	}
+	
 	@Override
 	public void init(Entity entity, World world) {
 		// TODO Auto-generated method stub
@@ -281,7 +348,13 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	
 	public final void syncMaxChakra() 
 	{
-		//make individual message for max chakra
+		PacketDispatcher.sendTo(new SyncMaxChakraMessage(this.entity), (EntityPlayerMP) this.entity);
+	}
+	
+	public final void syncJutsuList() 
+	{
+		//make individual message for Jutsu list
+		PacketDispatcher.sendTo(new SyncJutsuListMessage(this.entity), (EntityPlayerMP) this.entity);
 	}
 	
 	//helpers
@@ -292,6 +365,8 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		chakraRegenTimer = props.chakraRegenTimer;
 		
 		entity.getDataWatcher().updateObject(STAMINA_WATCHER, props.getCurrentStamina());
+		staminaMax = props.staminaMax;
+		staminaRegenTimer = props.staminaRegenTimer;
 	}
 	
 	public static final void register(EntityPlayer player)

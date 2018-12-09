@@ -11,16 +11,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class SyncMaxChakraMessage  extends AbstractClientMessage<SyncMaxChakraMessage>{
+public class SyncJutsuListMessage extends AbstractClientMessage<SyncJutsuListMessage>  {
 
 	private NBTTagCompound data;
+
+	public SyncJutsuListMessage() {}
 	
-	public SyncMaxChakraMessage() {}
-	
-	public SyncMaxChakraMessage(EntityPlayer player) {
+	public SyncJutsuListMessage(EntityPlayer player) {
 		data = new NBTTagCompound();
-		NinjaPropertiesPlayer.get(player).saveMaxChakra(data);
+		NinjaPropertiesPlayer.get(player).saveJutsuList(data);
 	}
+	
 	
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
@@ -36,8 +37,8 @@ public class SyncMaxChakraMessage  extends AbstractClientMessage<SyncMaxChakraMe
 
 	@Override
 	public void process(EntityPlayer player, Side side) {
-		Main.logger.info("Synchronizing max chakra data on CLIENT");
-		NinjaPropertiesPlayer.get(player).loadMaxChakra(data);
+		Main.logger.info("Synchronizing jutsu list data on CLIENT");
+		NinjaPropertiesPlayer.get(player).loadJutsuList(data);
 		
 	}
 

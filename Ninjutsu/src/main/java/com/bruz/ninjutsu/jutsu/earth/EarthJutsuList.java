@@ -1,5 +1,6 @@
 package com.bruz.ninjutsu.jutsu.earth;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -10,24 +11,40 @@ import com.bruz.ninjutsu.jutsu.Jutsu;
 
 public class EarthJutsuList {
 
-	public static Map<Integer, Jutsu> DList = new HashMap<Integer, Jutsu>();
+	public static ArrayList<Jutsu> DList;
+	public static Map<Integer, Jutsu> CList = new HashMap<Integer, Jutsu>();
+	public static Map<Integer, Jutsu> BList = new HashMap<Integer, Jutsu>();
+	public static Map<Integer, Jutsu> AList = new HashMap<Integer, Jutsu>();
 	
 	public static void init() {
-		DList.put(EnumJutsu.HeadHunter.ordinal(), new HeadHunter());
+		DList = new ArrayList<Jutsu>();
 	}
 	
-/*	public static Jutsu getRandomEarthJutsu(EnumRank rank) {
+	public static void Register(Jutsu j) {
+		switch(j._rank) {
+		case D: DList.add(j);
+			break;
+		default: 
+			break;
+		}		
+	}
+	
+	public static Jutsu getRandomEarthJutsu(EnumRank rank) {
 		Jutsu j = null;
 		switch(rank) {
-		case D: j = getRandomDRank();
+		case D: j = getRandomJutsu(DList);
 			break;
 		default: 
 			break;
 		}
 		return j;
-	}*/
-/*	public static Jutsu getRandomDRank() {
+	}
+	public static Jutsu getRandomJutsu(ArrayList<Jutsu> j) {
 		Random random = new Random();
-		return DList.get(random.nextInt(DList.size()));
-	}*/
+		if(j != null && j.size() > 0) {
+			Jutsu jutsu= j.get(random.nextInt(j.size()));
+			return jutsu;
+		}
+		return null;
+	}
 }
