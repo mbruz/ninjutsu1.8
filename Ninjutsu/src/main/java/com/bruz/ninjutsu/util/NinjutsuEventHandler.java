@@ -3,7 +3,9 @@ package com.bruz.ninjutsu.util;
 import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -37,11 +39,16 @@ public class NinjutsuEventHandler {
 	public void onLivingUpdate(LivingUpdateEvent event) {
 		if (event.entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.entity;
-			NinjaPropertiesPlayer.get(player).onUpdate();
+			NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
+			ninja.onUpdate();
 /*			if (player.isPlayerFullyAsleep()) {
 				player.addChatMessage(new ChatComponentText("After a full night's rest, you feel refreshed!"));
 				ExtendedPlayer.get(player).replenishMana();
 			}*/
+			if(!event.entity.worldObj.isRemote) {
+				if(ninja == null)
+					return;
+			}
 		}
 	}
 }

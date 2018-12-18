@@ -1,10 +1,12 @@
 package com.bruz.ninjutsu;
 
 import com.bruz.ninjutsu.gui.GuiChakraBar;
+import com.bruz.ninjutsu.gui.GuiStaminaBar;
 import com.bruz.ninjutsu.items.ClosedEarthScroll;
 import com.bruz.ninjutsu.items.EarthScrollRankD;
 import com.bruz.ninjutsu.jutsu.JutsuList;
 import com.bruz.ninjutsu.jutsu.earth.EarthJutsuList;
+import com.bruz.ninjutsu.jutsu.earth.HeadHunter;
 import com.bruz.ninjutsu.util.NinjutsuEventHandler;
 import com.bruz.ninjutsu.util.PacketDispatcher;
 import com.bruz.ninjutsu.util.keybinding.NinjutsuKeyBinds;
@@ -63,6 +65,7 @@ public class Main {
 		JutsuList.init();
 		
 		MinecraftForge.EVENT_BUS.register(new NinjutsuEventHandler());
+		MinecraftForge.EVENT_BUS.register(new HeadHunter());
 		
 		//REGISTER ITEMS
 		earthScrollRankD = new EarthScrollRankD();
@@ -82,8 +85,11 @@ public class Main {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(new GuiChakraBar(Minecraft.getMinecraft()));
+			MinecraftForge.EVENT_BUS.register(new GuiStaminaBar(Minecraft.getMinecraft()));
+		}
+			
 
 		
 	}

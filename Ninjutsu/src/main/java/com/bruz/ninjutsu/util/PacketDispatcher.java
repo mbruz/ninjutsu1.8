@@ -2,6 +2,9 @@ package com.bruz.ninjutsu.util;
 
 import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.network.AbstractMessage;
+import com.bruz.ninjutsu.network.CastJutsuMessage;
+import com.bruz.ninjutsu.network.SyncJutsuListMessage;
+import com.bruz.ninjutsu.network.SyncMaxChakraMessage;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,7 +54,12 @@ public class PacketDispatcher
 		//registerMessage(SyncNinjaPropsMessage.class);
 
 		// If you don't want to make a 'registerMessage' method, you can do it directly:
-		PacketDispatcher.dispatcher.registerMessage(SyncNinjaPropsMessage.class, SyncNinjaPropsMessage.class, packetId++, Side.CLIENT);
+		PacketDispatcher.registerMessage(SyncNinjaPropsMessage.class);
+		PacketDispatcher.registerMessage(SyncJutsuListMessage.class);
+		PacketDispatcher.registerMessage(SyncMaxChakraMessage.class);
+		PacketDispatcher.dispatcher.registerMessage(CastJutsuMessage.class, CastJutsuMessage.class, packetId++, Side.CLIENT);
+		
+		
 		//PacketDispatcher.dispatcher.registerMessage(SyncNinjaPropsMessage.class, SyncNinjaPropsMessage.class, packetId++, Side.SERVER);
 	}
 

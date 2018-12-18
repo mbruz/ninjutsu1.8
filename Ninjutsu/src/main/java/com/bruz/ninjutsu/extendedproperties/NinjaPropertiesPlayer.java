@@ -12,6 +12,7 @@ import com.bruz.ninjutsu.network.SyncJutsuListMessage;
 import com.bruz.ninjutsu.network.SyncMaxChakraMessage;
 import com.bruz.ninjutsu.network.SyncNinjaPropsMessage;
 import com.bruz.ninjutsu.util.PacketDispatcher;
+import com.bruz.ninjutsu.network.CastJutsuMessage;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -74,8 +75,6 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		chakraNature = (int)Math.random()*5;*/
 		
 	}
-	
-
 	
 	//Getters and Setters
 	
@@ -333,6 +332,19 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		}
 	}
 	
+	public void saveLoadedJutsu(NBTTagCompound compound) {
+		NBTTagCompound properties = new NBTTagCompound();
+		
+		properties.setInteger("LoadedJutsu", this.loadedJutsu.getJutsuId());
+		
+		compound.setTag(extendedPropertiesName, properties);
+	}
+	public void loadLoadedJutsu(NBTTagCompound compound) {
+		NBTTagCompound properties = (NBTTagCompound) compound.getTag(extendedPropertiesName);
+		
+		this.loadedJutsu = (IJutsu)JutsuList.matchIdtoJutsu(properties.getInteger("LoadedJutsu"));
+	}
+	
 	@Override
 	public void init(Entity entity, World world) {
 		// TODO Auto-generated method stub
@@ -353,8 +365,12 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	
 	public final void syncJutsuList() 
 	{
-		//make individual message for Jutsu list
 		PacketDispatcher.sendTo(new SyncJutsuListMessage(this.entity), (EntityPlayerMP) this.entity);
+	}
+	
+	public final void activateJutsu() 
+	{
+		PacketDispatcher.sendToServer(new CastJutsuMessage(this.entity));
 	}
 	
 	//helpers

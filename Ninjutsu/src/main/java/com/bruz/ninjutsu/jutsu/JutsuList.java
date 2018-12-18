@@ -50,6 +50,10 @@ public class JutsuList {
 		return hs;		
 	}
 	
+	public static Jutsu matchIdtoJutsu(int id) {
+		return HandSignJutsuList.get(IDList.get(id));
+	}
+	
 	//helpers
 	
 	private static void registerJutsu(Jutsu j) {

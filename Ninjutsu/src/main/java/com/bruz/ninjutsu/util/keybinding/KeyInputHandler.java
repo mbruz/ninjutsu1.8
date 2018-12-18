@@ -2,19 +2,25 @@ package com.bruz.ninjutsu.util.keybinding;
 
 import org.lwjgl.input.Keyboard;
 
+import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.enums.EnumHandSign;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 import com.bruz.ninjutsu.jutsu.IJutsu;
 import com.bruz.ninjutsu.jutsu.Jutsu;
+import com.bruz.ninjutsu.util.PacketDispatcher;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.ICommand;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 
 public class KeyInputHandler {
 
@@ -62,9 +68,12 @@ public class KeyInputHandler {
 	@SubscribeEvent
 	public void onMouseEvent(MouseEvent event) {
 		if (event.button != 1) return;
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
+		//get entity player mp instead
 		
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
+		player.addChatMessage(new ChatComponentText(
+				EnumChatFormatting.WHITE + "Right Click Event"));
 		if(ninja.getChakraMode() == false)
 			return;
 		
@@ -72,8 +81,9 @@ public class KeyInputHandler {
 		
 		if(j == null)
 			return;
-			//figure out how to activate jutsu
-		j.castJutsu(ninja);
+		player.addChatMessage(new ChatComponentText(
+				EnumChatFormatting.WHITE + "Right Click before Activate Jutsu"));
+		ninja.activateJutsu();
 		
 	}
 }
