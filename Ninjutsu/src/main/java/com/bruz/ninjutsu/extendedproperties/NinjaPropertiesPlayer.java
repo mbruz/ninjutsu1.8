@@ -152,8 +152,23 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		return false;
 	}
 	
+	private boolean updateStaminaTimer() {
+		if (staminaRegenTimer > 0) {
+			--staminaRegenTimer;
+		}
+		if (staminaRegenTimer == 0) {
+			staminaRegenTimer = getCurrentStamina() < getMaxStamina() ? 100 : 0;
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public final void regenChakra(int amount) {
 		setCurrentChakra(getCurrentChakra() + amount);
+	}
+	public final void regenStamina(int amount) {
+		setCurrentChakra(getCurrentStamina() + amount);
 	}
 	
 	public final boolean consumeChakra(int amount) {
@@ -162,12 +177,21 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		return sufficient;
 	}
 	
+	public final boolean consumeStamina(int amount) {
+		boolean sufficient = amount <= getCurrentStamina();
+		setCurrentStamina(getCurrentStamina() - amount);
+		return sufficient;
+	}
+	
 	public void onUpdate() {
 		// only want to update the timer and regen mana on the server:
 		if (!entity.worldObj.isRemote) {
 			if (updateChakraTimer()) {
 				regenChakra(1);
-			}			
+			}
+			if (updateStaminaTimer()) {
+				regenStamina(1);
+			}
 		}
 		updateHandSignTimer();
 	}
