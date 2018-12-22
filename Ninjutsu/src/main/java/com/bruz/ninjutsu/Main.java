@@ -88,10 +88,7 @@ public class Main {
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
 			MinecraftForge.EVENT_BUS.register(new GuiChakraBar(Minecraft.getMinecraft()));
 			MinecraftForge.EVENT_BUS.register(new GuiStaminaBar(Minecraft.getMinecraft()));
-		}
-			
-
-		
+		}		
 	}
 	
 	

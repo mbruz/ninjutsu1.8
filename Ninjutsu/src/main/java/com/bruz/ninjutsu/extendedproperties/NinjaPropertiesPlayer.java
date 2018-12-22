@@ -168,7 +168,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		setCurrentChakra(getCurrentChakra() + amount);
 	}
 	public final void regenStamina(int amount) {
-		setCurrentChakra(getCurrentStamina() + amount);
+		setCurrentStamina(getCurrentStamina() + amount);
 	}
 	
 	public final boolean consumeChakra(int amount) {
@@ -187,10 +187,10 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		// only want to update the timer and regen mana on the server:
 		if (!entity.worldObj.isRemote) {
 			if (updateChakraTimer()) {
-				regenChakra(1);
+				regenChakra(5);
 			}
 			if (updateStaminaTimer()) {
-				regenStamina(1);
+				regenStamina(5);
 			}
 		}
 		updateHandSignTimer();
