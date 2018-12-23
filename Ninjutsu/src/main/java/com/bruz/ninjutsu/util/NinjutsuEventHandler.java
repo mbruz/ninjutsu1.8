@@ -49,11 +49,10 @@ public class NinjutsuEventHandler {
 			EntityPlayer player = (EntityPlayer) event.entity;
 			NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
 			ninja.onUpdate();
-/*			if (player.isPlayerFullyAsleep()) {
-				player.addChatMessage(new ChatComponentText("After a full night's rest, you feel refreshed!"));
+			if (player.isPlayerFullyAsleep()) {
 				NinjaPropertiesPlayer.get(player).replenishChakra();
 				NinjaPropertiesPlayer.get(player).replenishStamina();
-			}*/
+			}
 		}
 	}
 	

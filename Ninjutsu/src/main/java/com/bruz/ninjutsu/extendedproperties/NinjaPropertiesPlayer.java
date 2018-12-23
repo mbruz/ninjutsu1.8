@@ -129,7 +129,7 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		syncJutsuList();
 	}
 	
-	//Chakra
+	//Chakra && Stamina
 	
 	public boolean getChakraMode() {
 		return chakraMode;
@@ -181,6 +181,13 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		boolean sufficient = amount <= getCurrentStamina();
 		setCurrentStamina(getCurrentStamina() - amount);
 		return sufficient;
+	}
+	
+	public void replenishChakra() {
+		setCurrentChakra(this.chakraMax);
+	}
+	public void replenishStamina() {
+		setCurrentChakra(this.staminaMax);
 	}
 	
 	public void onUpdate() {
