@@ -6,6 +6,7 @@ import com.bruz.ninjutsu.items.ClosedEarthScroll;
 import com.bruz.ninjutsu.items.EarthScrollRankD;
 import com.bruz.ninjutsu.jutsu.JutsuList;
 import com.bruz.ninjutsu.jutsu.earth.EarthJutsuList;
+import com.bruz.ninjutsu.jutsu.earth.ExplodeBlock;
 import com.bruz.ninjutsu.jutsu.earth.HeadHunter;
 import com.bruz.ninjutsu.util.NinjutsuEventHandler;
 import com.bruz.ninjutsu.util.PacketDispatcher;
@@ -26,6 +27,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import java.util.Random;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +45,7 @@ public class Main {
 	public static CommonProxy proxy;
 
 	public static final Logger logger = LogManager.getLogger(MODID);
-	
+	public static final Random RANDOM = new Random();
 	
 	//items
 	public static Item closedEarthScroll;
@@ -66,6 +69,7 @@ public class Main {
 		
 		MinecraftForge.EVENT_BUS.register(new NinjutsuEventHandler());
 		MinecraftForge.EVENT_BUS.register(new HeadHunter());
+		MinecraftForge.EVENT_BUS.register(new ExplodeBlock());
 		
 		//REGISTER ITEMS
 		earthScrollRankD = new EarthScrollRankD();

@@ -10,6 +10,7 @@ import com.bruz.ninjutsu.enums.EnumRank;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 import com.bruz.ninjutsu.jutsu.IJutsu;
 import com.bruz.ninjutsu.jutsu.Jutsu;
+import com.bruz.ninjutsu.util.PlayerMessageUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
@@ -24,6 +25,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,56 +37,61 @@ public class HeadHunter extends Jutsu implements IJutsu {
 	
 	public HeadHunter() {		
 		super(EnumChakraRelease.EARTH, "Earth Style: Head Hunter Jutsu", EnumRank.D, 10, new EnumHandSign[] {EnumHandSign.SNAKE});
-		JUTSUID = EnumJutsu.HeadHunter;
+		JUTSUID = EnumJutsu.HEADHUNTER;
 	}
 
 /*	@SubscribeEvent
-	public void onActivate(PlayerInteractEvent event) {
-		if(!event.world.isRemote) {
-			EntityPlayerMP player = (EntityPlayerMP)event.entityPlayer;
-			NinjaPropertiesPlayer.get(player).activateJutsu();
-		}
-	}*/
-	
-	
-	@Override
-	public void castJutsu(NinjaPropertiesPlayer player, Entity target) {
+	public void onActivate(MouseEvent event) {
+		if (event.button != 1) return;
+		
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
+		player.addChatMessage(new ChatComponentText(
+				EnumChatFormatting.WHITE + "Right Click Event"));
+		if(ninja.getChakraMode() == false)
+			return;
+		
+		IJutsu j = ninja.getLoadedJutsu();
+		
+		if(j == null)
+			return;
+			
 		World world = player.entity.worldObj;
 		MovingObjectPosition objectMouseOver = Minecraft.getMinecraft().objectMouseOver;
 		if (objectMouseOver != null)
 		{
 			if (objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
 			{
-				player.entity.addChatMessage(new ChatComponentText(
-						EnumChatFormatting.WHITE + "About to process jutsu"));
-				//return objectMouseOver.entityHit.getEntityName();
 				Entity e = objectMouseOver.entityHit;
+				ninja.activateJutsu(e);
+			}
+		}
+	}*/
+	
+	
+	//make cast jutsu for server side but activate it on event
+	
+	@Override
+	public void castJutsu(NinjaPropertiesPlayer ninja, Entity target) {
+		World world = ninja.entity.worldObj;
 				
-				if(e.isAirBorne)
-					return;
-				if(e.isInWater())
-					return;
-				if(e.onGround) {
-					float width = e.width;
+		if(target.isAirBorne)
+			return;
+		if(target.isInWater())
+			return;
+		if(target.onGround) {
+			double x = target.posX;
+			double y = target.posY;
+			double z = target.posZ;
 
-					double x = e.posX;
-					double y = e.posY;
-					double z = e.posZ;
+			world.destroyBlock(new BlockPos(x, y-1, z), true);
+			world.destroyBlock(new BlockPos(x, y-2, z), true);
 
-					world.destroyBlock(new BlockPos(x, y-1, z), true);
+			//target.setPosition(x, y-2, z);
 
-					world.destroyBlock(new BlockPos(x, y-2, z), true);
+			PlayerMessageUtil.Debug(ninja.entity, this._name);
+			ninja.consumeChakra(this._chakraCost);
 
-
-					e.setPosition(x, y-2, z);
-
-					player.entity.addChatMessage(new ChatComponentText(
-							EnumChatFormatting.WHITE + this._name));
-					player.consumeChakra(this._chakraCost);
-
-				}
-
-			}		
 		}
 
 	}

@@ -65,7 +65,7 @@ public class KeyInputHandler {
         }
     }
 
-	@SubscribeEvent
+/*	@SubscribeEvent
 	public void onMouseEvent(MouseEvent event) {
 		if (event.button != 1) return;
 		//get entity player mp instead
@@ -85,5 +85,5 @@ public class KeyInputHandler {
 				EnumChatFormatting.WHITE + "Right Click before Activate Jutsu"));
 		ninja.activateJutsu();
 		
-	}
+	}*/
 }

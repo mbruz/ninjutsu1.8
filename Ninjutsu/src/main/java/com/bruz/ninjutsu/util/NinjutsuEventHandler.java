@@ -1,5 +1,7 @@
 package com.bruz.ninjutsu.util;
 
+import org.lwjgl.input.Keyboard;
+
 import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 
@@ -19,6 +21,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import scala.swing.event.Key;
 
 public class NinjutsuEventHandler {
 
@@ -50,8 +53,8 @@ public class NinjutsuEventHandler {
 			NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
 			ninja.onUpdate();
 			if (player.isPlayerFullyAsleep()) {
-				NinjaPropertiesPlayer.get(player).replenishChakra();
-				NinjaPropertiesPlayer.get(player).replenishStamina();
+				ninja.replenishChakra();
+				ninja.replenishStamina();
 			}
 		}
 	}
@@ -83,7 +86,7 @@ public class NinjutsuEventHandler {
 	}
 	
 	@SubscribeEvent
-	public void onNinjaJump(LivingFallEvent event) {
+	public void onNinjaFall(LivingFallEvent event) {
 		
 		if(event.entity instanceof EntityPlayer) {
 			NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get((EntityPlayer)event.entity);
@@ -117,8 +120,8 @@ public class NinjutsuEventHandler {
 		}
 		
 	}
+	
 	@SubscribeEvent
-
 	public void climbWall(LivingUpdateEvent event) {
 		if (!(event.entity instanceof EntityPlayer)) {	
 			return;	
@@ -132,7 +135,12 @@ public class NinjutsuEventHandler {
 		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
 		
 		if(ninja.getChakraMode())//and chakra control rank D
-			player.motionY = 0.5;
-
+		{
+			if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				player.motionY = 0.0;
+			}else {
+				player.motionY = 0.5;
+			}
+		}
 	}
 }

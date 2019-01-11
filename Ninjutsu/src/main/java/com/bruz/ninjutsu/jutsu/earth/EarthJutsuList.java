@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.bruz.ninjutsu.Main;
 import com.bruz.ninjutsu.enums.EnumJutsu;
 import com.bruz.ninjutsu.enums.EnumRank;
 import com.bruz.ninjutsu.jutsu.Jutsu;
@@ -40,9 +41,8 @@ public class EarthJutsuList {
 		return j;
 	}
 	public static Jutsu getRandomJutsu(ArrayList<Jutsu> j) {
-		Random random = new Random();
 		if(j != null && j.size() > 0) {
-			Jutsu jutsu= j.get(random.nextInt(j.size()));
+			Jutsu jutsu= j.get(Main.RANDOM.nextInt(j.size()));
 			return jutsu;
 		}
 		return null;

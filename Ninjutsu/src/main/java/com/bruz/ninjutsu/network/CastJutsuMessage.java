@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 import com.bruz.ninjutsu.network.AbstractMessage.AbstractClientMessage;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -18,7 +19,7 @@ public class CastJutsuMessage extends AbstractClientMessage<CastJutsuMessage>  {
 
 	public CastJutsuMessage() {}
 	
-	public CastJutsuMessage(EntityPlayer player) {
+	public CastJutsuMessage(EntityPlayer player, Entity target) {
 		data = new NBTTagCompound();
 		NinjaPropertiesPlayer.get(player).saveLoadedJutsu(data);
 	}
@@ -41,7 +42,7 @@ public class CastJutsuMessage extends AbstractClientMessage<CastJutsuMessage>  {
 		player.addChatMessage(new ChatComponentText(
 				EnumChatFormatting.WHITE + "Server Side processing"));
 		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
-		//ninja.getLoadedJutsu().castJutsu(ninja);
+		//ninja.getLoadedJutsu().castJutsu(ninja, target);
 			
 		
 	}

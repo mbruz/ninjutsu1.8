@@ -7,6 +7,7 @@ import java.util.Map;
 import com.bruz.ninjutsu.enums.EnumHandSign;
 import com.bruz.ninjutsu.enums.EnumRank;
 import com.bruz.ninjutsu.jutsu.earth.EarthJutsuList;
+import com.bruz.ninjutsu.jutsu.earth.ExplodeBlock;
 import com.bruz.ninjutsu.jutsu.earth.HeadHunter;
 
 public class JutsuList {
@@ -17,7 +18,7 @@ public class JutsuList {
 		EarthJutsuList.init();
 		
 		registerJutsu(new HeadHunter());
-
+		registerJutsu(new ExplodeBlock());
 	}
 	
 	//matching
