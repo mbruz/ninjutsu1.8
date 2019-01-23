@@ -2,6 +2,7 @@ package com.bruz.ninjutsu.jutsu.earth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
 import com.bruz.ninjutsu.enums.EnumHandSign;
@@ -27,6 +28,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,7 +42,7 @@ public class HeadHunter extends Jutsu implements IJutsu {
 		JUTSUID = EnumJutsu.HEADHUNTER;
 	}
 
-/*	@SubscribeEvent
+	@SubscribeEvent
 	public void onActivate(MouseEvent event) {
 		if (event.button != 1) return;
 		
@@ -56,40 +58,44 @@ public class HeadHunter extends Jutsu implements IJutsu {
 		if(j == null)
 			return;
 			
-		World world = player.entity.worldObj;
+		World world = ninja.entity.worldObj;
 		MovingObjectPosition objectMouseOver = Minecraft.getMinecraft().objectMouseOver;
 		if (objectMouseOver != null)
 		{
 			if (objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY)
 			{
 				Entity e = objectMouseOver.entityHit;
-				ninja.activateJutsu(e);
+				
+				ninja.activateJutsuById(e.getEntityId());
 			}
 		}
-	}*/
+	}
 	
 	
 	//make cast jutsu for server side but activate it on event
 	
 	@Override
-	public void castJutsu(NinjaPropertiesPlayer ninja, Entity target) {
+	public void castJutsu(NinjaPropertiesPlayer ninja, int target, BlockPos block) {
+		Entity targetEntity = ninja.entity.worldObj.getEntityByID(target);
 		World world = ninja.entity.worldObj;
-				
-		if(target.isAirBorne)
+		
+		if(targetEntity.isAirBorne)
 			return;
-		if(target.isInWater())
+		if(targetEntity.isInWater())
 			return;
-		if(target.onGround) {
-			double x = target.posX;
-			double y = target.posY;
-			double z = target.posZ;
+		if(targetEntity.onGround) {
+			double x = targetEntity.posX;
+			double y = targetEntity.posY;
+			double z = targetEntity.posZ;
+			
+			PlayerMessageUtil.Debug(ninja.entity, this._name);
 
 			world.destroyBlock(new BlockPos(x, y-1, z), true);
 			world.destroyBlock(new BlockPos(x, y-2, z), true);
 
 			//target.setPosition(x, y-2, z);
 
-			PlayerMessageUtil.Debug(ninja.entity, this._name);
+			
 			ninja.consumeChakra(this._chakraCost);
 
 		}

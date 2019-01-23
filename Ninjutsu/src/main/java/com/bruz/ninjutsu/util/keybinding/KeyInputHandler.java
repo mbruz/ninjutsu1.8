@@ -8,6 +8,7 @@ import com.bruz.ninjutsu.extendedproperties.NinjaPropertiesPlayer;
 import com.bruz.ninjutsu.jutsu.IJutsu;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 import com.bruz.ninjutsu.util.PacketDispatcher;
+import com.bruz.ninjutsu.util.PlayerMessageUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -39,51 +40,61 @@ public class KeyInputHandler {
         		Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Chakra Mode Deactivated!"));                
         	}        	
         }
-        
-        boolean isChakraModeActive = NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).getChakraMode();
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        boolean isChakraModeActive = NinjaPropertiesPlayer.get(player).getChakraMode();
         
         // use this to check for handsigns
-        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_K)) {
-        	NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).addHandSign(EnumHandSign.MONKEY);
-        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Monkey")); 
+        if(!isChakraModeActive) {return;}
+        
+        if(NinjutsuKeyBinds.signMonkey.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.MONKEY);
+        	PlayerMessageUtil.Blue(player, "Monkey"); 
         }
-        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_J)) {
-        	NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).addHandSign(EnumHandSign.DRAGON);
-        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Dragon")); 
+        if(NinjutsuKeyBinds.signDragon.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.DRAGON);
+        	PlayerMessageUtil.Blue(player, "Dragon"); 
         }
-        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_L)) {
-        	NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).addHandSign(EnumHandSign.RAT);
-        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Rat")); 
+        if(NinjutsuKeyBinds.signRat.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.RAT);
+        	PlayerMessageUtil.Blue(player, "Rat"); 
         }
-        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_I)) {
-        	NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).addHandSign(EnumHandSign.BIRD);
-        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Bird")); 
+        if(NinjutsuKeyBinds.signBird.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.BIRD);
+        	PlayerMessageUtil.Blue(player, "Bird"); 
         }
-        if(isChakraModeActive && Keyboard.isKeyDown(Keyboard.KEY_O)) {
-        	NinjaPropertiesPlayer.get(Minecraft.getMinecraft().thePlayer).addHandSign(EnumHandSign.SNAKE);
-        	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLUE + "Snake")); 
+        if(NinjutsuKeyBinds.signSnake.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.SNAKE);
+        	PlayerMessageUtil.Blue(player, "Snake"); 
+        }
+        if(NinjutsuKeyBinds.signOx.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.OX);
+        	PlayerMessageUtil.Blue(player, "Ox"); 
+        }
+        if(NinjutsuKeyBinds.signDog.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.DOG);
+        	PlayerMessageUtil.Blue(player, "Dog"); 
+        }
+        if(NinjutsuKeyBinds.signHorse.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.HORSE);
+        	PlayerMessageUtil.Blue(player, "Horse"); 
+        }
+        if(NinjutsuKeyBinds.signTiger.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.TIGER);
+        	PlayerMessageUtil.Blue(player, "Tiger"); 
+        }
+        if(NinjutsuKeyBinds.signBoar.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.BOAR);
+        	PlayerMessageUtil.Blue(player, "Boar"); 
+        }
+        if(NinjutsuKeyBinds.signRam.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.RAM);
+        	PlayerMessageUtil.Blue(player, "Ram"); 
+        }
+        
+        if(NinjutsuKeyBinds.signHare.isPressed()) {
+        	NinjaPropertiesPlayer.get(player).addHandSign(EnumHandSign.HARE);
+        	PlayerMessageUtil.Blue(player, "Hare"); 
         }
     }
 
-/*	@SubscribeEvent
-	public void onMouseEvent(MouseEvent event) {
-		if (event.button != 1) return;
-		//get entity player mp instead
-		
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-		NinjaPropertiesPlayer ninja = NinjaPropertiesPlayer.get(player);
-		player.addChatMessage(new ChatComponentText(
-				EnumChatFormatting.WHITE + "Right Click Event"));
-		if(ninja.getChakraMode() == false)
-			return;
-		
-		IJutsu j = ninja.getLoadedJutsu();
-		
-		if(j == null)
-			return;
-		player.addChatMessage(new ChatComponentText(
-				EnumChatFormatting.WHITE + "Right Click before Activate Jutsu"));
-		ninja.activateJutsu();
-		
-	}*/
 }

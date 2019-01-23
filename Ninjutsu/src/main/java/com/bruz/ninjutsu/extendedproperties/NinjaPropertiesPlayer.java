@@ -2,6 +2,7 @@ package com.bruz.ninjutsu.extendedproperties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.bruz.ninjutsu.enums.EnumChakraRelease;
 import com.bruz.ninjutsu.enums.EnumHandSign;
@@ -23,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -40,11 +42,11 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 	
 	public static final int CHAKRA_WATCHER = 20;	
 	private int chakraRegenTimer;
-	private ChakraStats chakraStats;
+	public ChakraStats chakraStats;
 	
 	public static final int STAMINA_WATCHER = 21;
 	private int staminaRegenTimer;
-	private StaminaStats staminaStats;
+	public StaminaStats staminaStats;
 
 	private ArrayList<EnumHandSign> handSigns;
 	private int handSignTimer;
@@ -85,6 +87,9 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		}else {
 			return this.defaultJutsu;
 		}
+	}
+	public void unloadJutsu() {
+		this.loadedJutsu = null;
 	}
 	
 	public int getCurrentChakra() {
@@ -399,9 +404,13 @@ public class NinjaPropertiesPlayer implements IExtendedEntityProperties {
 		PacketDispatcher.sendTo(new SyncJutsuListMessage(this.entity), (EntityPlayerMP) this.entity);
 	}
 	
-	public final void activateJutsu(Entity target) 
+	public final void activateJutsuById(int id) 
 	{
-		PacketDispatcher.sendToServer(new CastJutsuMessage(this.entity, target));
+		PacketDispatcher.sendTo(new CastJutsuMessage(this.entity, id), (EntityPlayerMP) this.entity);
+	}
+	public final void activateJutsuByBlockPos(BlockPos block) 
+	{
+		PacketDispatcher.sendTo(new CastJutsuMessage(this.entity, block), (EntityPlayerMP) this.entity);
 	}
 	
 	//helpers

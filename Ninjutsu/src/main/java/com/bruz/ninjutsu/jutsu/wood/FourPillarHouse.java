@@ -9,6 +9,7 @@ import com.bruz.ninjutsu.jutsu.IJutsu;
 import com.bruz.ninjutsu.jutsu.Jutsu;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 
 public class FourPillarHouse  extends Jutsu implements IJutsu {
 
@@ -24,7 +25,7 @@ public class FourPillarHouse  extends Jutsu implements IJutsu {
 	}
 
 	@Override
-	public void castJutsu(NinjaPropertiesPlayer player, Entity target) {
+	public void castJutsu(NinjaPropertiesPlayer player, int target, BlockPos block) {
 		// TODO Auto-generated method stub
 		
 	}
