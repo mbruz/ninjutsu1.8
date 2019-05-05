@@ -28,20 +28,20 @@ public class NinjutsuKeyBinds {
     {
     	chakraMode = new KeyBinding("key.chakraMode", Keyboard.KEY_LMENU, ninjutsuCategory);
     	
-    	signOx = new KeyBinding("key.chakraMode", Keyboard.KEY_U, ninjutsuCategory);
-    	signBird = new KeyBinding("key.chakraMode", Keyboard.KEY_I, ninjutsuCategory);
-    	signSnake = new KeyBinding("key.chakraMode", Keyboard.KEY_O, ninjutsuCategory);    	
-    	signDog = new KeyBinding("key.chakraMode", Keyboard.KEY_P, ninjutsuCategory);
+    	signOx = new KeyBinding("key.signOx", Keyboard.KEY_U, ninjutsuCategory);
+    	signBird = new KeyBinding("key.signBird", Keyboard.KEY_I, ninjutsuCategory);
+    	signSnake = new KeyBinding("key.signSnake", Keyboard.KEY_O, ninjutsuCategory);    	
+    	signDog = new KeyBinding("key.signDog", Keyboard.KEY_P, ninjutsuCategory);
     	
-    	signHorse = new KeyBinding("key.chakraMode", Keyboard.KEY_H, ninjutsuCategory);
-    	signDragon = new KeyBinding("key.chakraMode", Keyboard.KEY_J, ninjutsuCategory);
-    	signMonkey = new KeyBinding("key.chakraMode", Keyboard.KEY_K, ninjutsuCategory);
-    	signRat = new KeyBinding("key.chakraMode", Keyboard.KEY_L, ninjutsuCategory);
+    	signHorse = new KeyBinding("key.signHorse", Keyboard.KEY_H, ninjutsuCategory);
+    	signDragon = new KeyBinding("key.signDragon", Keyboard.KEY_J, ninjutsuCategory);
+    	signMonkey = new KeyBinding("key.signMonkey", Keyboard.KEY_K, ninjutsuCategory);
+    	signRat = new KeyBinding("key.signRat", Keyboard.KEY_L, ninjutsuCategory);
     	
-    	signTiger = new KeyBinding("key.chakraMode", Keyboard.KEY_N, ninjutsuCategory);
-    	signBoar = new KeyBinding("key.chakraMode", Keyboard.KEY_M, ninjutsuCategory);   
-    	signRam = new KeyBinding("key.chakraMode", Keyboard.KEY_COMMA, ninjutsuCategory);
-    	signHare = new KeyBinding("key.chakraMode", Keyboard.KEY_PERIOD, ninjutsuCategory);
+    	signTiger = new KeyBinding("key.signTiger", Keyboard.KEY_N, ninjutsuCategory);
+    	signBoar = new KeyBinding("key.signBoar", Keyboard.KEY_M, ninjutsuCategory);   
+    	signRam = new KeyBinding("key.signRam", Keyboard.KEY_COMMA, ninjutsuCategory);
+    	signHare = new KeyBinding("key.signHare", Keyboard.KEY_PERIOD, ninjutsuCategory);
     	
         ClientRegistry.registerKeyBinding(chakraMode);
         ClientRegistry.registerKeyBinding(signMonkey);

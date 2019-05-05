@@ -1,4 +1,18 @@
+key.categories.ninjutsu=Ninjutsu
+key.chakraMode=Chakra Mode
+key.signOx=Ox Sign
+key.signBird=Bird Sign
+key.signSnake=Snake sign
+key.signDog=Dog sign
+key.signHorse=Horse sign
+key.signDragon=Dragon sign
+key.signMonkey=Monkey sign
+key.signRat=Rat sign
+key.signTiger=Tiger sign
+key.signBoar=Boar sign
+key.signRam=Ram sign
+key.signHare=Hare sign
+
 item.earthScrollRankD.name=Earth Scroll Rank D
 item.closedEarthScroll.name=Earth Scroll
-key.chakraMode=Chakra Mode
-key.categories.ninjutsu=Ninjutsu
+
